@@ -30,6 +30,6 @@ Para a realização deste trabalho, a linguagem python. Alem disso, foi utilizad
 
 **Seleção de Algoritmos e Modelos**: Com base na revisão da literatura, escolha os algoritmos e modelos teóricos que são mais adequados ao projeto. Isso pode incluir algoritmos de segmentação de texto, modelos de linguagem, e outros métodos relacionados ao OCR.
 
-**Teste e Validação**: Será Realizedo testes e validação rigorosos para garantir que seu sistema OCR atenda aos requisitos de precisão e desempenho.
+**Teste e Validação**: Será Realizado testes e validação rigorosos para garantir que seu sistema OCR atenda aos requisitos de precisão e desempenho.
 
 **Documentação e Relatório**: Será documentado todas as etapas da abordagem teórica, algoritmos e resultados em um relatório detalhado.
