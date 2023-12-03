@@ -1,4 +1,10 @@
 <h1>Trabalho de Processameto de Images 2023.2</h1>
+
+<h3>Alunos</h3>
+<p>
+  -> Èlyda Rodrigues
+  -> Gabriel Henrique
+</p>
 #Resumo
 **python** - Linguagem de programação
 
