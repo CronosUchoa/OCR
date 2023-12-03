@@ -2,7 +2,7 @@
 
 <h3>Alunos</h3>
 <p>
-  -> Èlyda Rodrigues
+  -> Èlyda Rodrigues<br>
   -> Gabriel Henrique
 </p>
 #Resumo
