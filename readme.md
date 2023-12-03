@@ -1,11 +1,11 @@
 <h1>Trabalho de Processameto de Images 2023.2</h1>
 
-<h3>Alunos</h3>
+<h2>Alunos</h2>
 <p>
   -> Èlyda Rodrigues<br>
   -> Gabriel Henrique
 </p>
-#Resumo
+<h2>Resumo</h2>
 **python** - Linguagem de programação
 
 **openCV** - Foi utilizado para tratamento de imagem, isto é trabalhar com imagem. Seja para ler,
