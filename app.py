@@ -3,14 +3,82 @@ import pytesseract as pt
 #from matplotlib import pyplot as plt
 import numpy as np
 
+
 #2pt.pytesseract.tesseract_cmd = "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
 
 #função
+def encontrarRoiPlaca(source):
+    img = cv2.imread(source)
+    #cv2.imshow("img", img)
+
+    cinza = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # cv2.imshow("cinza", img)
+
+    _, bin = cv2.threshold(cinza, 90, 255, cv2.THRESH_BINARY)
+    # cv2.imshow("binary", img)
+
+    desfoque = cv2.GaussianBlur(bin, (5, 5), 0)
+    # cv2.imshow("defoque", desfoque)
+
+    contornos, hierarquia = cv2.findContours(desfoque, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    # cv2.drawContours(img, contornos, -1, (0, 255, 0), 1)
+
+    for c in contornos:
+        perimetro = cv2.arcLength(c, True)
+        if perimetro > 150:
+            aprox = cv2.approxPolyDP(c, 0.03 * perimetro, True)
+            if len(aprox) == 4:
+                (x, y, alt, lar) = cv2.boundingRect(c)
+                cv2.rectangle(img, (x, y), (x + alt, y + lar), (0, 255, 0), 2)
+                roi = img[y:y + lar, x:x + alt]
+                cv2.imwrite('./Imagens/roi.jpg', roi)
+
+    #cv2.imshow("contornos", img)
+
+
+def preProcessamentoRoiPlaca():
+    img_roi = cv2.imread("./Imagens/roi.jpg")
+
+    if img_roi is None:
+        return
+
+    resize_img_roi = cv2.resize(img_roi, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+
+    # Converte para escala de cinza
+    img_cinza = cv2.cvtColor(resize_img_roi, cv2.COLOR_BGR2GRAY)
+
+    # Binariza imagem
+    _, img_binary = cv2.threshold(img_cinza, 31, 255, cv2.THRESH_BINARY)
+
+    # Desfoque na Imagem
+    img_desfoque = cv2.GaussianBlur(img_binary, (5, 5), 1)
+
+    # Grava o pre-processamento para o OCR
+    cv2.imwrite("./Imagens/roi-ocr.jpg", img_desfoque)
+
+    cv2.imshow("ROI", img_desfoque)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    return img_desfoque
+
+
+def ocrImageRoiPlaca():
+    image = cv2.imread("./Imagens/roi-ocr.jpg")
+
+    config = r'-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 --psm 6'
+
+    saida = pt.pytesseract.image_to_string(image, lang='eng', config=config)
+
+    return saida
+
+
 def remove_acentos(text):
   temAcento = 0
-  letras_com_acento = ['á','ã','â','é','ê','í','ó','õ','ô','ú','ü']
+  letras_com_acento = ['á','ã','â','é','ê','í','ó','õ','ô','ú','ü', '_']
 
-  letras_sem_acento = ['a','a','a','e','e','i','o','o','o','u','u']
+  letras_sem_acento = ['a','a','a','e','e','i','o','o','o','u','u', '']
 
   text_list = list(text)
 
@@ -43,16 +111,16 @@ def ImagemSimplesCapturaDeCaracteres():
   img = cv2.imread('./Imagens/Test.jpg')
 
   #@img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-  print(pt.pytesseract.image_to_string(img,lang='por'))
-  boxes = pt.pytesseract.image_to_boxes(img)
+  print(pt.pytesseract.image_to_string(img))
+  boxes = pt.pytesseract.image_to_boxes(img, lang = 'por')
   imgH,imgW, _ = img.shape
 
   for b in boxes.splitlines():
       b = b.split(' ')
       letra,posicaoX,posicaoY,larguraW,alturaH =  remove_acentos(b[0]),int(b[1]),int(b[2]),int(b[3]),int(b[4])
-    # cv2.rectangle(img, (posicaoX,imgH - posicaoY),(larguraW,imgH-alturaH),(0,0,255),2)
+      cv2.rectangle(img, (posicaoX,imgH - posicaoY),(larguraW,imgH-alturaH),(0,0,255),2)
       cv2.rectangle(img, (posicaoX,imgH - posicaoY),(larguraW, imgH - alturaH),(0,0,255),2)
-    # cv2.putText(img,letra,(posicaoX,imgH-posicaoY+25),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(0,0,255),2)
+      cv2.putText(img,letra,(posicaoX,imgH-posicaoY+25),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(0,0,255),2)
 
   #Mostrando OCR1
   cv2.imshow('Imagem', img)
@@ -60,11 +128,23 @@ def ImagemSimplesCapturaDeCaracteres():
   cv2.destroyAllWindows()
 
 
-def Image2():
-    return "Você escolheu a opção 2."
+def Placa_de_carro():
+  pt.pytesseract.tesseract_cmd = "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
+  config = r'-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 --psm 6'
 
-def Image3():
-    return "Você escolheu a opção 3."
+  encontrarRoiPlaca("./Imagens/carro4.jpg")
+
+  pre = preProcessamentoRoiPlaca()
+
+  ocr = ocrImageRoiPlaca()
+  ocr_new  = ocr.replace("_","")
+  print(ocr_new)
+ 
+  #cv2.imshow('Imagem', new_roi)
+ 
+  #Mostrando OCR2
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
 
 def default():
     return "Opção inválida. As opções válidas 1, 2 e 3 - 0 para sair"
@@ -72,8 +152,7 @@ def default():
 def switch_case(option):
     switch_dict = {
         1: ImagemSimplesCapturaDeCaracteres,
-        2: Image2,
-        3: Image3
+        2: Placa_de_carro,
     }
     return switch_dict.get(option, default)()
 
