@@ -2,8 +2,11 @@
 
 <h2>Alunos</h2>
 <p>
+
   -> Èlyda Rodrigues<br>
-  -> Gabriel Henrique
+  -> Gabriel Henrique<br>
+  -> Jose Lucas Amorim<br>
+  
 </p>
 <h2>Resumo</h2>
 **python** - Linguagem de programação
